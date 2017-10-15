@@ -1,0 +1,51 @@
+body {
+  font-family: 'Source Sans Pro', 'Trebuchet MS', 'Lucida Grande', 'Bitstream Vera Sans', 'Helvetica Neue', sans-serif;
+  font-size: 20px;
+  margin: 0;
+  text-align: center;
+  color: #fff;
+}
+
+img {
+  margin: 20px 0;
+  max-width: 200px;
+}
+
+.container {
+  display: flex;
+  margin: 0 auto;
+  width: 80%;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.game {
+  background-color: #5A6378;
+  margin-right: 10px;
+}
+
+.game-info {
+  background-color: #7FD13B;
+}
+
+.board {
+  display: flex;
+  flex-direction: column;
+}
+
+.board-row {
+  display: flex;
+  flex-direction: row;
+  width: 450px;
+  height: 150px;
+}
+
+.square {
+  display: flex;
+  flex-grow: 1;
+  flex-basis: 50px;
+  border-right: 1px solid white;
+  border-bottom: 1px solid white;
+  flex-direction: column;
+  justify-content: center;
+}
