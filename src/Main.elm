@@ -3,6 +3,10 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Events exposing (..)
 import Html.Attributes exposing (..)
+import Maybe exposing (Maybe(Just))
+
+
+-- model
 
 
 type alias Model =
@@ -18,14 +22,10 @@ type alias BoardState =
     }
 
 
-
--- model
-
-
 initialModel : Model
 initialModel =
     { history = []
-    , currentBoard = []
+    , currentBoard = List.repeat 9 "" -- FIX use a different value
     , stepNumber = 0
     , xIsNext = True
     }
@@ -37,7 +37,7 @@ initialModel =
 
 type Msg
     = AddBoardState
-    | AddMove String
+    | AddMove String Int
     | SwitchPlayer
     | JumpTo
 
@@ -45,10 +45,11 @@ type Msg
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        AddMove move ->
+        AddMove move index ->
             addMove
                 model
                 move
+                index
                 |> addBoardState
                 |> switchPlayer
 
@@ -61,11 +62,21 @@ update msg model =
             model
 
 
-addMove : Model -> String -> Model
-addMove model move =
+addMove : Model -> String -> Int -> Model
+addMove model move index =
     let
+        firstList =
+            List.take index model.currentBoard
+
+        secondList =
+            List.drop index model.currentBoard
+
+        newSecondList =
+            move :: Maybe.withDefault [] (List.tail secondList)
+
+        -- move :: secondList
         newCurrentBoard =
-            move :: model.currentBoard
+            List.append firstList newSecondList
     in
         Debug.log "MODEL"
             { model | currentBoard = newCurrentBoard }
@@ -115,11 +126,11 @@ board : Model -> Html Msg
 board model =
     div [ class "board" ]
         [ div [ class "board-row" ]
-            [ div [ class "square", onClick (AddMove (mark model)) ]
+            [ div [ class "square", onClick (AddMove (mark model) 0) ]
                 [ text "SQUARE" ]
-            , div [ class "square", onClick (AddMove (mark model)) ]
+            , div [ class "square", onClick (AddMove (mark model) 1) ]
                 [ text "SQUARE" ]
-            , div [ class "square", onClick (AddMove (mark model)) ]
+            , div [ class "square", onClick (AddMove (mark model) 2) ]
                 [ text "SQUARE" ]
             ]
         , div [ class "board-row" ]

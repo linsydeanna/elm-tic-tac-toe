@@ -40,12 +40,13 @@ img {
   height: 150px;
 }
 
+/* add a hover effect */
 .square {
   display: flex;
   flex-grow: 1;
   flex-basis: 50px;
-  border-right: 1px solid white;
-  border-bottom: 1px solid white;
+  border-right: 3px solid white;
+  border-bottom: 3px solid white;
   flex-direction: column;
   justify-content: center;
 }
