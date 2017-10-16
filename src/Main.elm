@@ -37,7 +37,7 @@ initialModel =
 
 type Msg
     = AddBoardState
-    | AddMove String Int
+    | AddMove Int
     | SwitchPlayer
     | JumpTo
 
@@ -45,10 +45,9 @@ type Msg
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        AddMove move index ->
+        AddMove index ->
             addMove
                 model
-                move
                 index
                 |> addBoardState
                 |> switchPlayer
@@ -62,8 +61,8 @@ update msg model =
             model
 
 
-addMove : Model -> String -> Int -> Model
-addMove model move index =
+addMove : Model -> Int -> Model
+addMove model index =
     let
         firstList =
             List.take index model.currentBoard
@@ -72,14 +71,12 @@ addMove model move index =
             List.drop index model.currentBoard
 
         newSecondList =
-            move :: Maybe.withDefault [] (List.tail secondList)
+            (nextMark model) :: Maybe.withDefault [] (List.tail secondList)
 
-        -- move :: secondList
         newCurrentBoard =
             List.append firstList newSecondList
     in
-        Debug.log "MODEL"
-            { model | currentBoard = newCurrentBoard }
+        { model | currentBoard = newCurrentBoard }
 
 
 addBoardState : Model -> Model
@@ -88,7 +85,8 @@ addBoardState model =
         newHistory =
             (BoardState model.currentBoard) :: model.history
     in
-        { model | history = newHistory }
+        Debug.log "MODEL"
+            { model | history = newHistory }
 
 
 switchPlayer : Model -> Model
@@ -100,14 +98,6 @@ switchPlayer model =
 -- view
 
 
-mark : Model -> String
-mark model =
-    if model.xIsNext then
-        "X"
-    else
-        "O"
-
-
 view : Model -> Html Msg
 view model =
     div [ class "container" ]
@@ -116,40 +106,37 @@ view model =
         , div [ class "game-info" ]
             [ div [ class "next-player" ]
                 [ text "Next Player: "
-                , text (toString (mark model)) -- FIX - rendering as a string
+                , text (toString (nextMark model)) -- FIX - rendering as a string
                 ]
             ]
         ]
 
 
+squares =
+    [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ]
+
+
 board : Model -> Html Msg
 board model =
-    div [ class "board" ]
-        [ div [ class "board-row" ]
-            [ div [ class "square", onClick (AddMove (mark model) 0) ]
-                [ text "SQUARE" ]
-            , div [ class "square", onClick (AddMove (mark model) 1) ]
-                [ text "SQUARE" ]
-            , div [ class "square", onClick (AddMove (mark model) 2) ]
-                [ text "SQUARE" ]
-            ]
-        , div [ class "board-row" ]
-            [ div [ class "square" ]
-                [ text "SQUARE" ]
-            , div [ class "square" ]
-                [ text "SQUARE" ]
-            , div [ class "square" ]
-                [ text "SQUARE" ]
-            ]
-        , div [ class "board-row" ]
-            [ div [ class "square" ]
-                [ text "SQUARE" ]
-            , div [ class "square" ]
-                [ text "SQUARE" ]
-            , div [ class "square" ]
-                [ text "SQUARE" ]
-            ]
-        ]
+    List.map2 square model.currentBoard squares
+        |> div [ class "board" ]
+
+
+nextMark : Model -> String
+nextMark model =
+    if model.xIsNext then
+        "X"
+    else
+        "O"
+
+
+square :
+    String
+    -> Int
+    -> Html Msg
+square mark squareNumber =
+    div [ class "square", onClick (AddMove squareNumber) ]
+        [ text (toString mark) ]
 
 
 main : Program Never Model Msg
