@@ -14,6 +14,7 @@ type alias Model =
     , currentBoard : List String
     , stepNumber : Int
     , xIsNext : Bool
+    , winner : Bool
     }
 
 
@@ -28,6 +29,7 @@ initialModel =
     , currentBoard = List.repeat 9 "" -- FIX use a different value
     , stepNumber = 0
     , xIsNext = True
+    , winner = False
     }
 
 
@@ -39,6 +41,7 @@ type Msg
     = AddBoardState
     | AddMove Int
     | SwitchPlayer
+    | CheckWinner (List String)
     | JumpTo
 
 
@@ -52,6 +55,9 @@ update msg model =
                 |> addBoardState
                 |> switchPlayer
 
+        CheckWinner list ->
+            checkWinner model list
+
         SwitchPlayer ->
             { model
                 | xIsNext = not model.xIsNext
@@ -59,6 +65,59 @@ update msg model =
 
         _ ->
             model
+
+
+checkWinner : Model -> List String -> Model
+checkWinner model list =
+    let
+        winner =
+            List.indexedMap (,) list
+                |> getX
+                |> getXIndexes
+                |> checkAllLines
+    in
+        Debug.log "CHECK WINNER: "
+            { model | winner = winner }
+
+
+getX listWithTuples =
+    List.filter
+        (\t -> (Tuple.second t) == "X")
+        listWithTuples
+
+
+getXIndexes listWithOnlyX =
+    Tuple.first (List.unzip listWithOnlyX)
+
+
+lines =
+    [ [ 0, 1, 2 ]
+    , [ 3, 4, 5 ]
+    , [ 6, 7, 8 ]
+    , [ 0, 3, 6 ]
+    , [ 1, 4, 7 ]
+    , [ 2, 5, 8 ]
+    , [ 0, 4, 8 ]
+    , [ 2, 4, 6 ]
+    ]
+
+
+checkAllLines listXIndexes =
+    let
+        checkedLines =
+            List.map
+                (\line ->
+                    if List.length (List.filter (\space -> List.member space listXIndexes) line) == 3 then
+                        True
+                    else
+                        False
+                )
+                lines
+    in
+        if List.member True checkedLines then
+            True
+        else
+            False
 
 
 addMove : Model -> Int -> Model
@@ -108,6 +167,12 @@ view model =
                 [ text "Next Player: "
                 , text (nextMark model) -- FIX - rendering as a string
                 ]
+            , div [ class "next-player" ]
+                [ text "WINNER: "
+                , text (toString model.winner) -- FIX - rendering as a string
+                ]
+            , button [ onClick (CheckWinner model.currentBoard) ]
+                [ text "run checkWinner" ]
             ]
         ]
 
