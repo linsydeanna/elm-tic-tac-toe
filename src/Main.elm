@@ -26,7 +26,7 @@ type alias BoardState =
 initialModel : Model
 initialModel =
     { history = []
-    , currentBoard = List.repeat 9 "" -- FIX use a different value
+    , currentBoard = List.repeat 9 ""
     , stepNumber = 0
     , xIsNext = True
     , winner = False
@@ -53,7 +53,7 @@ update msg model =
                 model
                 index
                 |> addBoardState
-                |> checkWinner
+                |> checkForWinner
                 |> switchPlayer
 
         SwitchPlayer ->
@@ -65,27 +65,25 @@ update msg model =
             model
 
 
-checkWinner : Model -> Model
-checkWinner model =
+checkForWinner : Model -> Model
+checkForWinner model =
     let
         winner =
             List.indexedMap (,) model.currentBoard
-                |> getX
-                |> getXIndexes
+                |> getPlayerSpaces model
                 |> checkAllLines
     in
-        Debug.log "CHECK WINNER: "
-            { model | winner = winner }
+        { model | winner = winner }
 
 
-getX listWithTuples =
-    List.filter
-        (\t -> (Tuple.second t) == "X")
-        listWithTuples
-
-
-getXIndexes listWithOnlyX =
-    Tuple.first (List.unzip listWithOnlyX)
+getPlayerSpaces model currentBoard =
+    Tuple.first
+        (List.unzip
+            (List.filter
+                (\t -> (Tuple.second t) == (nextMark model))
+                currentBoard
+            )
+        )
 
 
 lines =
@@ -100,12 +98,12 @@ lines =
     ]
 
 
-checkAllLines listXIndexes =
+checkAllLines playerSpaces =
     let
         checkedLines =
             List.map
                 (\line ->
-                    if List.length (List.filter (\space -> List.member space listXIndexes) line) == 3 then
+                    if List.length (List.filter (\space -> List.member space playerSpaces) line) == 3 then
                         True
                     else
                         False
