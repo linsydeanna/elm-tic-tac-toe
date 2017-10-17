@@ -53,10 +53,8 @@ update msg model =
                 model
                 index
                 |> addBoardState
+                |> checkWinner
                 |> switchPlayer
-
-        CheckWinner list ->
-            checkWinner model list
 
         SwitchPlayer ->
             { model
@@ -67,11 +65,11 @@ update msg model =
             model
 
 
-checkWinner : Model -> List String -> Model
-checkWinner model list =
+checkWinner : Model -> Model
+checkWinner model =
     let
         winner =
-            List.indexedMap (,) list
+            List.indexedMap (,) model.currentBoard
                 |> getX
                 |> getXIndexes
                 |> checkAllLines
@@ -165,14 +163,12 @@ view model =
         , div [ class "game-info" ]
             [ div [ class "next-player" ]
                 [ text "Next Player: "
-                , text (nextMark model) -- FIX - rendering as a string
+                , text (nextMark model)
                 ]
             , div [ class "next-player" ]
                 [ text "WINNER: "
-                , text (toString model.winner) -- FIX - rendering as a string
+                , text (toString model.winner)
                 ]
-            , button [ onClick (CheckWinner model.currentBoard) ]
-                [ text "run checkWinner" ]
             ]
         ]
 
