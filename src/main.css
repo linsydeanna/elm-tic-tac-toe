@@ -35,8 +35,7 @@ body {
 
 .square {
   align-items: center;
-  border-right: 1px solid white;
-  border-bottom: 1px solid white;
+  border: 1px solid white;
   display: flex;
   flex-basis: 33.33%;
   font-size: 50px;
@@ -55,5 +54,6 @@ body {
 
 .next-player {
   font-size: 20px;
+  margin-bottom: 5px;
   width: 100%;
 }
