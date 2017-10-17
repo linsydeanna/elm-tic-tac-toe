@@ -1,14 +1,12 @@
 body {
   font-family: 'Source Sans Pro', 'Trebuchet MS', 'Lucida Grande', 'Bitstream Vera Sans', 'Helvetica Neue', sans-serif;
-  font-size: 20px;
   margin: 0;
   text-align: center;
   color: #fff;
 }
 
-img {
-  margin: 20px 0;
-  max-width: 200px;
+* {
+  box-sizing: border-box;
 }
 
 .container {
@@ -22,6 +20,7 @@ img {
 .game {
   background-color: #5A6378;
   margin-right: 10px;
+  width: 30%;
 }
 
 .game-info {
@@ -30,23 +29,31 @@ img {
 
 .board {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  width: 100%;
 }
 
-.board-row {
-  display: flex;
-  flex-direction: row;
-  width: 450px;
-  height: 150px;
-}
-
-/* add a hover effect */
 .square {
+  align-items: center;
+  border-right: 1px solid white;
+  border-bottom: 1px solid white;
   display: flex;
-  flex-grow: 1;
-  flex-basis: 50px;
-  border-right: 3px solid white;
-  border-bottom: 3px solid white;
-  flex-direction: column;
+  flex-basis: 33.33%;
+  font-size: 50px;
   justify-content: center;
+}
+
+.square:after {
+  content: "";
+  padding-bottom: 100%;
+}
+
+.game-info {
+  padding: 10px;
+  width: 30%;
+}
+
+.next-player {
+  font-size: 20px;
+  width: 100%;
 }

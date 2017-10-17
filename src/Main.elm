@@ -106,7 +106,7 @@ view model =
         , div [ class "game-info" ]
             [ div [ class "next-player" ]
                 [ text "Next Player: "
-                , text (toString (nextMark model)) -- FIX - rendering as a string
+                , text (nextMark model) -- FIX - rendering as a string
                 ]
             ]
         ]
@@ -136,7 +136,7 @@ square :
     -> Html Msg
 square mark squareNumber =
     div [ class "square", onClick (AddMove squareNumber) ]
-        [ text (toString mark) ]
+        [ text mark ]
 
 
 main : Program Never Model Msg
