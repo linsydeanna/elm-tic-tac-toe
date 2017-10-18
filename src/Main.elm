@@ -185,7 +185,7 @@ view model =
                 ]
             , div [ class "winner" ]
                 [ div []
-                    [ text (winnerText model.winner (nextMark model)) ]
+                    [ text (winnerText model.winner) ]
                 , div []
                     [ text (winnerMark model.winner (winningMark model)) ]
                 , div []
@@ -201,7 +201,8 @@ view model =
         ]
 
 
-winnerText winner nextMark =
+winnerText : Bool -> String
+winnerText winner =
     if winner then
         "WINNER!"
     else
