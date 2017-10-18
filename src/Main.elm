@@ -85,8 +85,7 @@ checkForWinner model =
 
 
 getPlayerSpaces model currentBoard =
-    Debug.log "TUPLE"
-        Tuple.first
+    Tuple.first
         (List.unzip
             (List.filter
                 (\t -> (Tuple.second t) == (nextMark model))
@@ -154,14 +153,13 @@ addBoardState : Model -> Model
 addBoardState model =
     let
         history =
-            List.take (Debug.log "number to take" (List.length (filledSpaces model.currentBoard))) model.history
+            List.take (List.length (filledSpaces model.currentBoard)) model.history
 
         newHistory =
             (BoardState model.currentBoard)
-                :: Debug.log "CURRENT HISTORY " history
+                :: history
     in
-        Debug.log "MODEL"
-            { model | history = newHistory }
+        { model | history = newHistory }
 
 
 switchPlayer : Model -> Model
@@ -217,6 +215,7 @@ winningMark model =
         "X"
 
 
+winnerMark : Bool -> String -> String
 winnerMark winner winningMark =
     if winner then
         winningMark
