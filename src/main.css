@@ -24,7 +24,9 @@ body {
 }
 
 .game-info {
-  background-color: #7FD13B;
+  background-color: #F3F6F7;
+  margin-right: 10px;
+  color: #5A6378;
 }
 
 .board {
@@ -49,11 +51,49 @@ body {
 
 .game-info {
   padding: 10px;
-  width: 30%;
+  width: 25%;
 }
 
 .next-player {
-  font-size: 20px;
+  font-size: 12px;
   margin-bottom: 5px;
   width: 100%;
+}
+
+.moves {
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.winner {
+  font-size: 50px;
+  margin-top: 20px;
+  color: #7FD13B;
+}
+
+.history {
+  display: flex;
+  justify-content: center;
+}
+
+button {
+  margin-bottom: 3px;
+}
+
+.state-buttons {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+}
+
+@media (min-width: 768px) {
+  .next-player, .moves {
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 1080px) {
+  .next-player, .moves {
+    font-size: 20px;
+  }
 }

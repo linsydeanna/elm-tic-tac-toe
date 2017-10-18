@@ -25,7 +25,7 @@ type alias BoardState =
 
 initialModel : Model
 initialModel =
-    { history = []
+    { history = [ { squares = (List.repeat 9 "") } ]
     , currentBoard = List.repeat 9 ""
     , stepNumber = 0
     , xIsNext = True
@@ -38,11 +38,10 @@ initialModel =
 
 
 type Msg
-    = AddBoardState
-    | AddMove Int
+    = AddMove Int
+    | GoToState (List String)
     | SwitchPlayer
-    | CheckWinner (List String)
-    | JumpTo
+    | StartNewGame
 
 
 update : Msg -> Model -> Model
@@ -56,13 +55,22 @@ update msg model =
                 |> checkForWinner
                 |> switchPlayer
 
+        GoToState state ->
+            { model | currentBoard = state }
+
         SwitchPlayer ->
             { model
                 | xIsNext = not model.xIsNext
             }
 
-        _ ->
-            model
+        StartNewGame ->
+            { model
+                | history = [ { squares = (List.repeat 9 "") } ]
+                , currentBoard = List.repeat 9 ""
+                , stepNumber = 0
+                , xIsNext = True
+                , winner = False
+            }
 
 
 checkForWinner : Model -> Model
@@ -77,7 +85,8 @@ checkForWinner model =
 
 
 getPlayerSpaces model currentBoard =
-    Tuple.first
+    Debug.log "TUPLE"
+        Tuple.first
         (List.unzip
             (List.filter
                 (\t -> (Tuple.second t) == (nextMark model))
@@ -86,6 +95,7 @@ getPlayerSpaces model currentBoard =
         )
 
 
+lines : List (List Int)
 lines =
     [ [ 0, 1, 2 ]
     , [ 3, 4, 5 ]
@@ -98,6 +108,7 @@ lines =
     ]
 
 
+checkAllLines : List Int -> Bool
 checkAllLines playerSpaces =
     let
         checkedLines =
@@ -134,11 +145,20 @@ addMove model index =
         { model | currentBoard = newCurrentBoard }
 
 
+filledSpaces : List String -> List String
+filledSpaces currentBoard =
+    List.filter (\space -> space /= "") currentBoard
+
+
 addBoardState : Model -> Model
 addBoardState model =
     let
+        history =
+            List.take (Debug.log "number to take" (List.length (filledSpaces model.currentBoard))) model.history
+
         newHistory =
-            (BoardState model.currentBoard) :: model.history
+            (BoardState model.currentBoard)
+                :: Debug.log "CURRENT HISTORY " history
     in
         Debug.log "MODEL"
             { model | history = newHistory }
@@ -163,14 +183,76 @@ view model =
                 [ text "Next Player: "
                 , text (nextMark model)
                 ]
-            , div [ class "next-player" ]
-                [ text "WINNER: "
-                , text (toString model.winner)
+            , div [ class "winner" ]
+                [ div []
+                    [ text (winnerText model.winner (nextMark model)) ]
+                , div []
+                    [ text (winnerMark model.winner (winningMark model)) ]
+                , div []
+                    [ newGame model.winner ]
                 ]
+            ]
+        , div [ class "game-info" ]
+            [ div [ class "moves" ]
+                [ text "Moves" ]
+            , div [ class "history" ]
+                [ moveHistory model ]
             ]
         ]
 
 
+winnerText winner nextMark =
+    if winner then
+        "WINNER!"
+    else
+        ""
+
+
+winningMark : Model -> String
+winningMark model =
+    if model.xIsNext then
+        "O"
+    else
+        "X"
+
+
+winnerMark winner winningMark =
+    if winner then
+        winningMark
+    else
+        ""
+
+
+newGame : Bool -> Html Msg
+newGame winner =
+    if winner then
+        button [ class "new-game", onClick StartNewGame ]
+            [ text "New Game" ]
+    else
+        div [] []
+
+
+moveHistory : Model -> Html Msg
+moveHistory model =
+    List.map2 stateButtons (List.reverse model.history) squares
+        |> div [ class "state-buttons" ]
+
+
+moveNumber : Int -> String
+moveNumber number =
+    if number == 0 then
+        "game start"
+    else
+        toString number
+
+
+stateButtons : BoardState -> Int -> Html Msg
+stateButtons boardState number =
+    button [ onClick (GoToState boardState.squares) ]
+        [ text ("Go to " ++ (moveNumber number)) ]
+
+
+squares : List Int
 squares =
     [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ]
 
@@ -189,10 +271,7 @@ nextMark model =
         "O"
 
 
-square :
-    String
-    -> Int
-    -> Html Msg
+square : String -> Int -> Html Msg
 square mark squareNumber =
     div [ class "square", onClick (AddMove squareNumber) ]
         [ text mark ]
