@@ -153,7 +153,7 @@ addBoardState : Model -> Model
 addBoardState model =
     let
         history =
-            List.take (List.length (filledSpaces model.currentBoard)) model.history
+            List.take (List.length <| filledSpaces model.currentBoard) model.history
 
         newHistory =
             (BoardState model.currentBoard)
@@ -179,13 +179,13 @@ view model =
         , div [ class "game-info" ]
             [ div [ class "next-player" ]
                 [ text "Next Player: "
-                , text (nextMark model)
+                , text <| nextMark model
                 ]
             , div [ class "winner" ]
                 [ div []
-                    [ text (winnerText model.winner) ]
+                    [ text <| winnerText model.winner ]
                 , div []
-                    [ text (winnerMark model.winner (winningMark model)) ]
+                    [ text <| winnerMark model.winner <| winningMark model ]
                 , div []
                     [ newGame model.winner ]
                 ]
@@ -273,7 +273,7 @@ nextMark model =
 
 square : String -> Int -> Html Msg
 square mark squareNumber =
-    div [ class "square", onClick (AddMove squareNumber) ]
+    div [ class "square", onClick <| AddMove squareNumber ]
         [ text mark ]
 
 
