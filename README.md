@@ -1,6 +1,8 @@
 # Elm Tic-Tac-Toe
 
-### To run the project:
+View the [live demo](https://linsydeanna.github.io/elm-tic-tac-toe)
+
+### Or to run the project:
 
 
 `elm-app install`
